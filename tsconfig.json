@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "esModuleInterop": true,
+        "module": "CommonJS",
+        "outDir": "./build",
+        "strict": true,
+        "target": "ES6"
+    },
+    "include": ["source/**/*"],
+    "exclude": ["**/*.test.ts"]
+}

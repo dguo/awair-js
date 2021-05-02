@@ -1,0 +1,77 @@
+{
+    "name": "awair",
+    "version": "0.1.0",
+    "description": "Client library for the Awair API",
+    "keywords": [
+        "awair",
+        "air"
+    ],
+    "homepage": "https://github.com/dguo/awair-js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dguo/awair-js.git"
+    },
+    "author": {
+        "name": "Danny Guo",
+        "email": "danny@dannyguo.com",
+        "url": "https://dannyguo.com"
+    },
+    "files": [
+        "build"
+    ],
+    "main": "build/index.js",
+    "types": "build/index.d.ts",
+    "sideEffects": false,
+    "license": "MIT",
+    "scripts": {
+        "build": "yarn run clean && tsc",
+        "build:watch": "yarn run clean && tsc --watch",
+        "clean": "rimraf build",
+        "format": "prettier --write \"./**/*.{json,ts}\"",
+        "format:check": "prettier --list-different \"./**/*.{json,ts}\"",
+        "example": "node example.js",
+        "lint": "eslint \"./**/*.ts\"",
+        "prepublishOnly": "yarn run format && yarn run lint && yarn run test && yarn run build",
+        "start": "yarn install && yarn run build:watch",
+        "test": "jest",
+        "test:watch": "jest --watchAll"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@types/jest": "^26.0.23",
+        "@typescript-eslint/eslint-plugin": "^4.22.0",
+        "@typescript-eslint/parser": "^4.22.0",
+        "eslint": "^7.25.0",
+        "eslint-config-prettier": "^8.3.0",
+        "fetch-mock-jest": "^1.5.1",
+        "jest": "^26.6.3",
+        "prettier": "^2.2.1",
+        "rimraf": "^3.0.2",
+        "ts-jest": "^26.5.5",
+        "typescript": "^4.2.4"
+    },
+    "eslintConfig": {
+        "parser": "@typescript-eslint/parser",
+        "plugins": [
+            "@typescript-eslint"
+        ],
+        "extends": [
+            "eslint:recommended",
+            "plugin:@typescript-eslint/recommended",
+            "prettier"
+        ],
+        "env": {
+            "node": true
+        }
+    },
+    "jest": {
+        "collectCoverage": true,
+        "coverageDirectory": "./coverage/",
+        "preset": "ts-jest",
+        "testEnvironment": "node"
+    },
+    "prettier": {
+        "bracketSpacing": false,
+        "tabWidth": 4
+    }
+}
