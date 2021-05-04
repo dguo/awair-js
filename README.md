@@ -1,7 +1,7 @@
 # Awair JS
 
 [![npm](https://img.shields.io/npm/v/awair.svg)](https://www.npmjs.com/package/awair)
-[![license](https://img.shields.io/npm/l/awair.svg)](https://github.com/dguo/awair/blob/main/LICENSE.txt)
+[![license](https://img.shields.io/npm/l/awair.svg)](https://github.com/dguo/awair-js/blob/main/LICENSE.txt)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/awair)](https://bundlephobia.com/result?p=awair)
 [![continuous integration status](https://github.com/dguo/awair-js/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/dguo/awair-js/actions/workflows/continuous-integration.yml)
 <!-- [![test coverage](https://codecov.io/gh/dguo/awair-js/branch/main/graph/badge.svg)](https://codecov.io/gh/dguo/awair-js) -->
