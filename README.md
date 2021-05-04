@@ -4,10 +4,12 @@
 [![license](https://img.shields.io/npm/l/awair.svg)](https://github.com/dguo/awair/blob/main/LICENSE.txt)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/awair)](https://bundlephobia.com/result?p=awair)
 [![CI status](https://github.com/dguo/awair-js/workflows/CI/badge.svg)](https://github.com/dguo/awair-js/actions?query=branch%3Amain)
-[![test coverage](https://codecov.io/gh/dguo/awair-js/branch/main/graph/badge.svg)](https://codecov.io/gh/dguo/awair-js)
+<!-- [![test coverage](https://codecov.io/gh/dguo/awair-js/branch/main/graph/badge.svg)](https://codecov.io/gh/dguo/awair-js) -->
 [![known vulnerabilities](https://snyk.io/test/github/dguo/awair-js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/dguo/awair-js?targetFile=package.json)
 
 JavaScript client for the [Awair API](https://docs.developer.getawair.com/).
+
+This is a work in progress. Significant changes and documentation are incoming.
 
 ## Installation
 
@@ -19,6 +21,15 @@ or
 
 ```sh
 yarn add awair
+```
+
+## Usage
+
+```javascript
+import {Awair} from "awair";
+
+const bearerToken = "<your bearer token>";
+const awair = new Awair(bearerToken);
 ```
 
 ## License

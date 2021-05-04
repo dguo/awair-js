@@ -126,6 +126,30 @@ export class Awair {
         return response.data;
     }
 
+    async get5MinuteAverageAirData(
+        deviceType?: string,
+        deviceId?: number
+    ): Promise<AirData[]> {
+        const response = await this.axiosInstance.get(
+            `users/self/devices/${deviceType ?? this.deviceType}/${
+                deviceId ?? this.deviceId
+            }/air-data/5-min-avg`
+        );
+        return response.data;
+    }
+
+    async get15MinuteAverageAirData(
+        deviceType?: string,
+        deviceId?: number
+    ): Promise<AirData[]> {
+        const response = await this.axiosInstance.get(
+            `users/self/devices/${deviceType ?? this.deviceType}/${
+                deviceId ?? this.deviceId
+            }/air-data/15-min-avg`
+        );
+        return response.data;
+    }
+
     async getDeviceDisplayMode(
         deviceType?: string,
         deviceId?: number

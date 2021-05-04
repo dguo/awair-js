@@ -31,9 +31,9 @@ jobs:
         run: yarn run format:check
       - name: Lint the code
         run: yarn run lint
-      - name: Test the code
-        run: yarn run test
+      # - name: Test the code
+        # run: yarn run test
       - name: Build the code
         run: yarn run build
-      - name: Upload code coverage to Codecov
-        uses: codecov/codecov-action@v1
+      # - name: Upload code coverage to Codecov
+        # uses: codecov/codecov-action@v1

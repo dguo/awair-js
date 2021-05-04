@@ -3,3 +3,7 @@
 This project attempts to adhere to [Semantic Versioning](http://semver.org).
 
 ## [Unreleased]
+
+### Added
+
+- Initial implementation of GET requests
