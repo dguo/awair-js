@@ -1,4 +1,4 @@
-import axios, {AxiosInstance} from "axios";
+import axios, {AxiosInstance, AxiosRequestConfig} from "axios";
 
 export interface Device {
     name: string;
@@ -54,158 +54,190 @@ export interface AirData {
     indices: SensorIndex[];
 }
 
+export interface BaseOptions {
+    deviceType?: string;
+    deviceId?: number;
+    axiosConfig?: AxiosRequestConfig;
+    bearerToken?: string;
+}
+
 export class Awair {
-    axiosInstance: AxiosInstance;
+    #axiosInstance: AxiosInstance;
+    #bearerToken: string | null;
     deviceType: string | null;
     deviceId: number | null;
 
-    constructor(bearerToken: string) {
-        this.axiosInstance = axios.create({
+    constructor(options?: BaseOptions) {
+        this.#axiosInstance = axios.create({
             baseURL: "https://developer-apis.awair.is/v1/",
-            headers: {
-                Authorization: `Bearer ${bearerToken}`,
-            },
+            ...this.getAxiosConfig(options),
         });
-        this.deviceType = null;
-        this.deviceId = null;
+
+        this.deviceType = options?.deviceType ?? null;
+        this.deviceId = options?.deviceId ?? null;
+        this.#bearerToken = options?.bearerToken ?? null;
     }
 
-    setDevice(deviceType: string, deviceId: number): void {
-        this.deviceType = deviceType;
-        this.deviceId = deviceId;
-    }
-
-    clearDevice(): void {
-        this.deviceType = null;
-        this.deviceId = null;
-    }
-
-    async getDevices(): Promise<Device[]> {
-        const response = await this.axiosInstance.get("users/self/devices");
+    async getDevices(options?: BaseOptions): Promise<Device[]> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const response = await this.#axiosInstance.get(
+            "users/self/devices",
+            axiosConfig
+        );
         return response.data.devices;
     }
 
     async getUser(): Promise<User> {
-        const response = await this.axiosInstance.get("users/self");
+        const response = await this.#axiosInstance.get("users/self");
         return response.data;
     }
 
-    async getDeviceAPIUsage(
-        deviceType?: string,
-        deviceId?: number
-    ): Promise<Usage[]> {
-        const response = await this.axiosInstance.get(
-            `users/self/devices/${deviceType ?? this.deviceType}/${
-                deviceId ?? this.deviceId
-            }/api-usages `
+    private getAxiosConfig(
+        options?: BaseOptions
+    ): AxiosRequestConfig | undefined {
+        if (!options) {
+            return;
+        }
+
+        const bearerToken = options?.bearerToken ?? this.#bearerToken;
+        if (!bearerToken) {
+            return options?.axiosConfig;
+        }
+
+        const axiosConfig = {...options.axiosConfig};
+        if (options.bearerToken) {
+            if (axiosConfig.headers) {
+                if (typeof axiosConfig.headers === "object") {
+                    axiosConfig.headers.Authorization = `Bearer ${options.bearerToken}`;
+                } else {
+                    throw new Error("Headers must be an object");
+                }
+            } else {
+                axiosConfig.headers = {
+                    Authorization: `Bearer ${options.bearerToken}`,
+                };
+            }
+        }
+
+        return axiosConfig;
+    }
+
+    private getDevice(options?: BaseOptions) {
+        const deviceType = options?.deviceType ?? this.deviceType;
+        if (!deviceType) {
+            throw new Error("Missing device type");
+        }
+        const deviceId = options?.deviceId ?? this.deviceId;
+        if (!deviceId) {
+            throw new Error("Missing device id");
+        }
+
+        return {
+            id: deviceId,
+            type: deviceType,
+        };
+    }
+
+    async getDeviceAPIUsage(options?: BaseOptions): Promise<Usage[]> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        const response = await this.#axiosInstance.get(
+            `users/self/devices/${device.type}/${device.id}/api-usages`,
+            axiosConfig
         );
         return response.data.usages;
     }
 
-    async getLatestAirData(
-        deviceType?: string,
-        deviceId?: number
-    ): Promise<AirData | null> {
-        const response = await this.axiosInstance.get(
-            `users/self/devices/${deviceType ?? this.deviceType}/${
-                deviceId ?? this.deviceId
-            }/air-data/latest`
+    async getLatestAirData(options?: BaseOptions): Promise<AirData | null> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        const response = await this.#axiosInstance.get(
+            `users/self/devices/${device.type}/${device.id}/air-data/latest`,
+            axiosConfig
         );
         return response.data.data?.[0] ?? null;
     }
 
-    async getRawAirData(
-        deviceType?: string,
-        deviceId?: number
-    ): Promise<AirData[]> {
-        const response = await this.axiosInstance.get(
-            `users/self/devices/${deviceType ?? this.deviceType}/${
-                deviceId ?? this.deviceId
-            }/air-data/raw`
+    async getRawAirData(options?: BaseOptions): Promise<AirData[]> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        const response = await this.#axiosInstance.get(
+            `users/self/devices/${device.type}/${device.id}/air-data/raw`,
+            axiosConfig
         );
         return response.data;
     }
 
-    async get5MinuteAverageAirData(
-        deviceType?: string,
-        deviceId?: number
-    ): Promise<AirData[]> {
-        const response = await this.axiosInstance.get(
-            `users/self/devices/${deviceType ?? this.deviceType}/${
-                deviceId ?? this.deviceId
-            }/air-data/5-min-avg`
+    async get5MinuteAverageAirData(options?: BaseOptions): Promise<AirData[]> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        const response = await this.#axiosInstance.get(
+            `users/self/devices/${device.type}/${device.id}/air-data/5-min-avg`,
+            axiosConfig
         );
         return response.data;
     }
 
-    async get15MinuteAverageAirData(
-        deviceType?: string,
-        deviceId?: number
-    ): Promise<AirData[]> {
-        const response = await this.axiosInstance.get(
-            `users/self/devices/${deviceType ?? this.deviceType}/${
-                deviceId ?? this.deviceId
-            }/air-data/15-min-avg`
+    async get15MinuteAverageAirData(options?: BaseOptions): Promise<AirData[]> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        const response = await this.#axiosInstance.get(
+            `users/self/devices/${device.type}/${device.id}/air-data/15-min-avg`,
+            axiosConfig
         );
         return response.data;
     }
 
-    async getDeviceDisplayMode(
-        deviceType?: string,
-        deviceId?: number
-    ): Promise<string> {
-        const response = await this.axiosInstance.get(
-            `devices/${deviceType ?? this.deviceType}/${
-                deviceId ?? this.deviceId
-            }/display`
+    async getDeviceDisplayMode(options?: BaseOptions): Promise<string> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        const response = await this.#axiosInstance.get(
+            `devices/${device.type}/${device.id}/display`,
+            axiosConfig
         );
         return response.data.mode;
     }
 
-    async getDeviceKnockingMode(
-        deviceType?: string,
-        deviceId?: number
-    ): Promise<string> {
-        const response = await this.axiosInstance.get(
-            `devices/${deviceType ?? this.deviceType}/${
-                deviceId ?? this.deviceId
-            }/knocking`
+    async getDeviceKnockingMode(options?: BaseOptions): Promise<string> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        const response = await this.#axiosInstance.get(
+            `devices/${device.type}/${device.id}/knocking`,
+            axiosConfig
         );
         return response.data.mode;
     }
 
     async getDeviceLEDMode(
-        deviceType?: string,
-        deviceId?: number
+        options?: BaseOptions
     ): Promise<{mode: string; brightness?: number}> {
-        const response = await this.axiosInstance.get(
-            `devices/${deviceType ?? this.deviceType}/${
-                deviceId ?? this.deviceId
-            }/led`
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        const response = await this.#axiosInstance.get(
+            `devices/${device.type}/${device.id}/led`,
+            axiosConfig
         );
         return response.data;
     }
 
     async getDevicePowerStatus(
-        deviceType?: string,
-        deviceId?: number
+        options?: BaseOptions
     ): Promise<{percentage: number; plugged: boolean; timestamp: string}> {
-        const response = await this.axiosInstance.get(
-            `devices/${deviceType ?? this.deviceType}/${
-                deviceId ?? this.deviceId
-            }/power-status`
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        const response = await this.#axiosInstance.get(
+            `devices/${device.type}/${device.id}/power-status`,
+            axiosConfig
         );
         return response.data;
     }
 
-    async getDeviceTimeZone(
-        deviceType?: string,
-        deviceId?: number
-    ): Promise<string> {
-        const response = await this.axiosInstance.get(
-            `devices/${deviceType ?? this.deviceType}/${
-                deviceId ?? this.deviceId
-            }/timezone`
+    async getDeviceTimeZone(options?: BaseOptions): Promise<string> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        const response = await this.#axiosInstance.get(
+            `devices/${device.type}/${device.id}/timezone`,
+            axiosConfig
         );
         return response.data.timezone;
     }
