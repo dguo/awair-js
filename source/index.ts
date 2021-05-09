@@ -1,15 +1,39 @@
 import axios, {AxiosInstance, AxiosRequestConfig} from "axios";
 
+export type DeviceRoomType =
+    | "LIVING_ROOM"
+    | "NURSERY"
+    | "BEDROOM"
+    | "KITCHEN"
+    | "OFFICE"
+    | "OTHERS"
+    | "BASEMENT"
+    | "DINING_ROOM"
+    | "HALLWAY"
+    | "BATHROOM"
+    | "PATIO"
+    | "GARAGE"
+    | "ATTIC"
+    | "MEETING_ROOM"
+    | "RESTROOM"
+    | "BOARD_ROOM"
+    | "EXECUTIVE_SUITE"
+    | "LOUNGE"
+    | "LOBBY"
+    | "LABORATORY";
+
+export type DeviceSpaceType = "HOME" | "OFFICE" | "OTHERS";
+
 export interface Device {
     name: string;
     macAddress: string;
     latitude: number;
     preference: string;
     timezone: string;
-    roomType: string;
+    roomType: DeviceRoomType;
     deviceType: string;
     longitude: number;
-    spaceType: string;
+    spaceType: DeviceSpaceType;
     deviceUUID: string;
     deviceId: number;
     locationName: string;
@@ -83,6 +107,12 @@ export type DeviceDisplayMode =
 
 export type DeviceKnockingMode = "on" | "off" | "sleep";
 
+export type DeviceClockMode = "12hr" | "24hr";
+
+export type DeviceBrightness = 0 | 20 | 40 | 60 | 80 | 100;
+
+export type DeviceTemperatureUnit = "c" | "f";
+
 export type DeviceLEDMode = "auto" | "dim" | "manual" | "on" | "sleep";
 
 export interface BaseOptions {
@@ -90,6 +120,45 @@ export interface BaseOptions {
     deviceId?: number;
     axiosConfig?: AxiosRequestConfig;
     bearerToken?: string;
+}
+
+export interface SetDeviceDisplayModeOptions extends BaseOptions {
+    mode: DeviceDisplayMode;
+    clockMode?: DeviceClockMode;
+    brightness?: DeviceBrightness;
+    temperatureUnit?: DeviceTemperatureUnit;
+}
+
+export interface SetDeviceKnockingModeOptions extends BaseOptions {
+    mode: DeviceKnockingMode;
+}
+
+export interface SetDeviceLEDModeOptions extends BaseOptions {
+    mode: DeviceLEDMode;
+    /* This one can be any integer between 0 and 100, so we're not using
+       DeviceBrightness. */
+    brightness?: number;
+}
+
+export interface SetDeviceLocationOptions extends BaseOptions {
+    latitude: number;
+    longitude: number;
+}
+
+export interface SetDeviceNameOptions extends BaseOptions {
+    name: string;
+}
+
+export interface SetDevicePreferenceOptions extends BaseOptions {
+    preference: "general" | "productivity" | "sleep" | "allergy" | "baby";
+}
+
+export interface SetDeviceRoomTypeOptions extends BaseOptions {
+    roomType: DeviceRoomType;
+}
+
+export interface SetDeviceSpaceTypeOptions extends BaseOptions {
+    spaceType: DeviceSpaceType;
 }
 
 export class Awair {
@@ -231,6 +300,23 @@ export class Awair {
         return response.data.mode;
     }
 
+    async setDeviceDisplayMode(
+        options: SetDeviceDisplayModeOptions
+    ): Promise<void> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        await this.#axiosInstance.put(
+            `devices/${device.type}/${device.id}/display`,
+            {
+                mode: options.mode,
+                clock_mode: options.clockMode,
+                brightness: options.brightness,
+                temp_unit: options.temperatureUnit,
+            },
+            axiosConfig
+        );
+    }
+
     async getDeviceKnockingMode(
         options?: BaseOptions
     ): Promise<DeviceKnockingMode> {
@@ -243,6 +329,20 @@ export class Awair {
         return response.data.mode;
     }
 
+    async setDeviceKnockingMode(
+        options: SetDeviceKnockingModeOptions
+    ): Promise<void> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        await this.#axiosInstance.put(
+            `devices/${device.type}/${device.id}/knocking`,
+            {
+                mode: options.mode,
+            },
+            axiosConfig
+        );
+    }
+
     async getDeviceLEDMode(
         options?: BaseOptions
     ): Promise<{mode: DeviceLEDMode; brightness?: number}> {
@@ -253,6 +353,83 @@ export class Awair {
             axiosConfig
         );
         return response.data;
+    }
+
+    async setDeviceLEDMode(options: SetDeviceLEDModeOptions): Promise<void> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        await this.#axiosInstance.put(
+            `devices/${device.type}/${device.id}/led`,
+            {
+                mode: options.mode,
+            },
+            axiosConfig
+        );
+    }
+
+    async setDeviceLocation(options: SetDeviceLocationOptions): Promise<void> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        await this.#axiosInstance.put(
+            `devices/${device.type}/${device.id}/location`,
+            {
+                latitude: options.latitude,
+                longitude: options.longitude,
+            },
+            axiosConfig
+        );
+    }
+
+    async setDeviceName(options: SetDeviceNameOptions): Promise<void> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        await this.#axiosInstance.put(
+            `devices/${device.type}/${device.id}/name`,
+            {
+                name: options.name,
+            },
+            axiosConfig
+        );
+    }
+
+    async setDevicePreference(
+        options: SetDevicePreferenceOptions
+    ): Promise<void> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        await this.#axiosInstance.put(
+            `devices/${device.type}/${device.id}/preference`,
+            {
+                pref: options.preference,
+            },
+            axiosConfig
+        );
+    }
+
+    async setDeviceRoomType(options: SetDeviceRoomTypeOptions): Promise<void> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        await this.#axiosInstance.put(
+            `devices/${device.type}/${device.id}/room`,
+            {
+                room_type: options.roomType,
+            },
+            axiosConfig
+        );
+    }
+
+    async setDeviceSpaceType(
+        options: SetDeviceSpaceTypeOptions
+    ): Promise<void> {
+        const axiosConfig = this.getAxiosConfig(options);
+        const device = this.getDevice(options);
+        await this.#axiosInstance.put(
+            `devices/${device.type}/${device.id}/space`,
+            {
+                space_type: options.spaceType,
+            },
+            axiosConfig
+        );
     }
 
     async getDevicePowerStatus(

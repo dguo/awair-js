@@ -6,11 +6,11 @@ This project attempts to adhere to [Semantic Versioning](http://semver.org).
 
 ### Added
 
+- Add functions to change device options
 - Allow setting a device for the instance instead of per request
 - Allow passing Axios options for all requests
 - Allow passing a bearer token for all requests
-- Export more types: UsageScope, SensorIndexComp, SensorReadingComp,
-  DeviceDisplayMode, DeviceKnockingMode, DeviceLEDMode
+- Export more types
 
 ### Changed
 
