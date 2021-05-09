@@ -115,49 +115,49 @@ export type DeviceTemperatureUnit = "c" | "f";
 
 export type DeviceLEDMode = "auto" | "dim" | "manual" | "on" | "sleep";
 
-export interface BaseOptions {
+export interface Options {
     deviceType?: string;
     deviceId?: number;
     axiosConfig?: AxiosRequestConfig;
     bearerToken?: string;
 }
 
-export interface SetDeviceDisplayModeOptions extends BaseOptions {
+export interface SetDeviceDisplayModeOptions extends Options {
     mode: DeviceDisplayMode;
     clockMode?: DeviceClockMode;
     brightness?: DeviceBrightness;
     temperatureUnit?: DeviceTemperatureUnit;
 }
 
-export interface SetDeviceKnockingModeOptions extends BaseOptions {
+export interface SetDeviceKnockingModeOptions extends Options {
     mode: DeviceKnockingMode;
 }
 
-export interface SetDeviceLEDModeOptions extends BaseOptions {
+export interface SetDeviceLEDModeOptions extends Options {
     mode: DeviceLEDMode;
     /* This one can be any integer between 0 and 100, so we're not using
        DeviceBrightness. */
     brightness?: number;
 }
 
-export interface SetDeviceLocationOptions extends BaseOptions {
+export interface SetDeviceLocationOptions extends Options {
     latitude: number;
     longitude: number;
 }
 
-export interface SetDeviceNameOptions extends BaseOptions {
+export interface SetDeviceNameOptions extends Options {
     name: string;
 }
 
-export interface SetDevicePreferenceOptions extends BaseOptions {
+export interface SetDevicePreferenceOptions extends Options {
     preference: "general" | "productivity" | "sleep" | "allergy" | "baby";
 }
 
-export interface SetDeviceRoomTypeOptions extends BaseOptions {
+export interface SetDeviceRoomTypeOptions extends Options {
     roomType: DeviceRoomType;
 }
 
-export interface SetDeviceSpaceTypeOptions extends BaseOptions {
+export interface SetDeviceSpaceTypeOptions extends Options {
     spaceType: DeviceSpaceType;
 }
 
@@ -167,7 +167,7 @@ export class Awair {
     deviceType: string | null;
     deviceId: number | null;
 
-    constructor(options?: BaseOptions) {
+    constructor(options?: Options) {
         this.#axiosInstance = axios.create({
             baseURL: "https://developer-apis.awair.is/v1/",
             ...this.getAxiosConfig(options),
@@ -178,9 +178,7 @@ export class Awair {
         this.#bearerToken = options?.bearerToken ?? null;
     }
 
-    private getAxiosConfig(
-        options?: BaseOptions
-    ): AxiosRequestConfig | undefined {
+    private getAxiosConfig(options?: Options): AxiosRequestConfig | undefined {
         if (!options) {
             return;
         }
@@ -208,7 +206,7 @@ export class Awair {
         return axiosConfig;
     }
 
-    private getDevice(options?: BaseOptions) {
+    private getDevice(options?: Options) {
         const deviceType = options?.deviceType ?? this.deviceType;
         if (!deviceType) {
             throw new Error("Missing device type");
@@ -224,7 +222,7 @@ export class Awair {
         };
     }
 
-    async getDevices(options?: BaseOptions): Promise<Device[]> {
+    async getDevices(options?: Options): Promise<Device[]> {
         const axiosConfig = this.getAxiosConfig(options);
         const response = await this.#axiosInstance.get(
             "users/self/devices",
@@ -238,7 +236,7 @@ export class Awair {
         return response.data;
     }
 
-    async getDeviceAPIUsage(options?: BaseOptions): Promise<Usage[]> {
+    async getDeviceAPIUsage(options?: Options): Promise<Usage[]> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
         const response = await this.#axiosInstance.get(
@@ -248,7 +246,7 @@ export class Awair {
         return response.data.usages;
     }
 
-    async getLatestAirData(options?: BaseOptions): Promise<AirData | null> {
+    async getLatestAirData(options?: Options): Promise<AirData | null> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
         const response = await this.#axiosInstance.get(
@@ -258,7 +256,7 @@ export class Awair {
         return response.data.data?.[0] ?? null;
     }
 
-    async getRawAirData(options?: BaseOptions): Promise<AirData[]> {
+    async getRawAirData(options?: Options): Promise<AirData[]> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
         const response = await this.#axiosInstance.get(
@@ -268,7 +266,7 @@ export class Awair {
         return response.data;
     }
 
-    async get5MinuteAverageAirData(options?: BaseOptions): Promise<AirData[]> {
+    async get5MinuteAverageAirData(options?: Options): Promise<AirData[]> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
         const response = await this.#axiosInstance.get(
@@ -278,7 +276,7 @@ export class Awair {
         return response.data;
     }
 
-    async get15MinuteAverageAirData(options?: BaseOptions): Promise<AirData[]> {
+    async get15MinuteAverageAirData(options?: Options): Promise<AirData[]> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
         const response = await this.#axiosInstance.get(
@@ -288,9 +286,7 @@ export class Awair {
         return response.data;
     }
 
-    async getDeviceDisplayMode(
-        options?: BaseOptions
-    ): Promise<DeviceDisplayMode> {
+    async getDeviceDisplayMode(options?: Options): Promise<DeviceDisplayMode> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
         const response = await this.#axiosInstance.get(
@@ -318,7 +314,7 @@ export class Awair {
     }
 
     async getDeviceKnockingMode(
-        options?: BaseOptions
+        options?: Options
     ): Promise<DeviceKnockingMode> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
@@ -344,7 +340,7 @@ export class Awair {
     }
 
     async getDeviceLEDMode(
-        options?: BaseOptions
+        options?: Options
     ): Promise<{mode: DeviceLEDMode; brightness?: number}> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
@@ -433,7 +429,7 @@ export class Awair {
     }
 
     async getDevicePowerStatus(
-        options?: BaseOptions
+        options?: Options
     ): Promise<{percentage: number; plugged: boolean; timestamp: string}> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
@@ -444,7 +440,7 @@ export class Awair {
         return response.data;
     }
 
-    async getDeviceTimeZone(options?: BaseOptions): Promise<string> {
+    async getDeviceTimeZone(options?: Options): Promise<string> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
         const response = await this.#axiosInstance.get(
