@@ -7,7 +7,8 @@
 <!-- [![test coverage](https://codecov.io/gh/dguo/awair-js/branch/main/graph/badge.svg)](https://codecov.io/gh/dguo/awair-js) -->
 [![known vulnerabilities](https://snyk.io/test/github/dguo/awair-js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/dguo/awair-js?targetFile=package.json)
 
-JavaScript client for the [Awair API](https://docs.developer.getawair.com/).
+JavaScript client for [Awair](https://www.getawair.com/)'s
+[API](https://docs.developer.getawair.com/).
 
 This is a work in progress. Significant changes and documentation are incoming.
 
@@ -29,7 +30,7 @@ yarn add awair
 import {Awair} from "awair";
 
 const bearerToken = "<your bearer token>";
-const awair = new Awair(bearerToken);
+const awair = new Awair({bearerToken});
 ```
 
 ## License
