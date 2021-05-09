@@ -24,11 +24,18 @@ export type DeviceRoomType =
 
 export type DeviceSpaceType = "HOME" | "OFFICE" | "OTHERS";
 
+export type DevicePreference =
+    | "GENERAL"
+    | "PRODUCTIVITY"
+    | "SLEEP"
+    | "ALLERGY"
+    | "BABY";
+
 export interface Device {
     name: string;
     macAddress: string;
     latitude: number;
-    preference: string;
+    preference: DevicePreference;
     timezone: string;
     roomType: DeviceRoomType;
     deviceType: string;
@@ -150,7 +157,7 @@ export interface SetDeviceNameOptions extends Options {
 }
 
 export interface SetDevicePreferenceOptions extends Options {
-    preference: "general" | "productivity" | "sleep" | "allergy" | "baby";
+    preference: DevicePreference;
 }
 
 export interface SetDeviceRoomTypeOptions extends Options {
