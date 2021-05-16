@@ -46,20 +46,38 @@ export interface Device {
     locationName: string;
 }
 
-export type UsageScope = "FITEEN_MIN" | "FIVE_MIN" | "LATEST" | "RAW";
+export type DeviceAPIUsageScope =
+    | "FITEEN_MIN"
+    | "FIVE_MIN"
+    | "LATEST"
+    | "RAW"
+    | "GET_DISPLAY_MODE"
+    | "GET_KNOCKING_MODE"
+    | "GET_LED_MODE"
+    | "GET_POWER_STATUS"
+    | "GET_TIMEZONE"
+    | "PUT_DISPLAY_MODE"
+    | "PUT_LED_MODE";
 
-export interface Usage {
-    scope: UsageScope;
+export interface DeviceAPIUsage {
+    scope: DeviceAPIUsageScope;
+    usage: number;
+}
+
+export type UserAPIUsageScope = "USER_DEVICE_LIST" | "USER_INFO";
+
+export interface UserAPIUsage {
+    scope: UserAPIUsageScope;
     usage: number;
 }
 
 export interface Permission {
     scope: string;
-    usage: number;
+    quota: number;
 }
 
 export interface User {
-    usages: Usage[];
+    usages: UserAPIUsage[];
     tier: string;
     email: string;
     dobYear?: number;
@@ -112,7 +130,7 @@ export type DeviceDisplayMode =
     | "temp_humid_fahrenheit"
     | "voc";
 
-export type DeviceKnockingMode = "on" | "off" | "sleep";
+export type DeviceKnockingMode = "ON" | "OFF" | "SLEEP";
 
 export type DeviceClockMode = "12hr" | "24hr";
 
@@ -120,13 +138,20 @@ export type DeviceBrightness = 0 | 20 | 40 | 60 | 80 | 100;
 
 export type DeviceTemperatureUnit = "c" | "f";
 
-export type DeviceLEDMode = "auto" | "dim" | "manual" | "on" | "sleep";
+export type DeviceLEDMode = "AUTO" | "DIM" | "MANUAL" | "ON" | "SLEEP";
+
+export interface DevicePowerStatus {
+    percentage: number;
+    plugged: boolean;
+    timestamp: string;
+}
 
 export interface Options {
     deviceType?: string;
     deviceId?: number;
     axiosConfig?: AxiosRequestConfig;
     bearerToken?: string;
+    mockMode?: boolean;
 }
 
 export interface GetLatestAirDataOptions extends Options {
