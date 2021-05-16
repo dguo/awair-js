@@ -129,6 +129,17 @@ export interface Options {
     bearerToken?: string;
 }
 
+export interface GetLatestAirDataOptions extends Options {
+    fahrenheit?: boolean;
+}
+
+export interface GetAirDataOptions extends GetLatestAirDataOptions {
+    from?: string;
+    to?: string;
+    limit?: number;
+    desc?: boolean;
+}
+
 export interface SetDeviceDisplayModeOptions extends Options {
     mode: DeviceDisplayMode;
     clockMode?: DeviceClockMode;
