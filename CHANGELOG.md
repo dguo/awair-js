@@ -4,6 +4,10 @@ This project attempts to adhere to [Semantic Versioning](http://semver.org).
 
 ## [Unreleased]
 
+### Added
+
+- Support parameters when getting AirData
+
 ## [0.2.0] - (2021-05-09)
 
 ### Added

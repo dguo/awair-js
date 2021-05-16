@@ -6,6 +6,8 @@ import {
     DeviceDisplayMode,
     DeviceKnockingMode,
     DeviceLEDMode,
+    GetAirDataOptions,
+    GetLatestAirDataOptions,
     Options,
     SetDeviceDisplayModeOptions,
     SetDeviceKnockingModeOptions,
@@ -31,6 +33,8 @@ export {
     DeviceRoomType,
     DeviceSpaceType,
     DeviceTemperatureUnit,
+    GetAirDataOptions,
+    GetLatestAirDataOptions,
     Options,
     Permission,
     SensorIndexComp,
@@ -135,42 +139,84 @@ export class Awair {
         return response.data.usages;
     }
 
-    async getLatestAirData(options?: Options): Promise<AirData | null> {
+    async getLatestAirData(
+        options?: GetLatestAirDataOptions
+    ): Promise<AirData | null> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
         const response = await this.#axiosInstance.get(
             `users/self/devices/${device.type}/${device.id}/air-data/latest`,
-            axiosConfig
+            {
+                ...axiosConfig,
+                params: {
+                    ...axiosConfig?.params,
+                    fahrenheit: options?.fahrenheit,
+                },
+            }
         );
         return response.data.data?.[0] ?? null;
     }
 
-    async getRawAirData(options?: Options): Promise<AirData[]> {
+    async getRawAirData(options?: GetAirDataOptions): Promise<AirData[]> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
         const response = await this.#axiosInstance.get(
             `users/self/devices/${device.type}/${device.id}/air-data/raw`,
-            axiosConfig
+            {
+                ...axiosConfig,
+                params: {
+                    ...axiosConfig?.params,
+                    fahrenheit: options?.fahrenheit,
+                    from: options?.from,
+                    to: options?.to,
+                    limit: options?.limit,
+                    desc: options?.desc,
+                },
+            }
         );
         return response.data;
     }
 
-    async get5MinuteAverageAirData(options?: Options): Promise<AirData[]> {
+    async get5MinuteAverageAirData(
+        options?: GetAirDataOptions
+    ): Promise<AirData[]> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
         const response = await this.#axiosInstance.get(
             `users/self/devices/${device.type}/${device.id}/air-data/5-min-avg`,
-            axiosConfig
+            {
+                ...axiosConfig,
+                params: {
+                    ...axiosConfig?.params,
+                    fahrenheit: options?.fahrenheit,
+                    from: options?.from,
+                    to: options?.to,
+                    limit: options?.limit,
+                    desc: options?.desc,
+                },
+            }
         );
         return response.data;
     }
 
-    async get15MinuteAverageAirData(options?: Options): Promise<AirData[]> {
+    async get15MinuteAverageAirData(
+        options?: GetAirDataOptions
+    ): Promise<AirData[]> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
         const response = await this.#axiosInstance.get(
             `users/self/devices/${device.type}/${device.id}/air-data/15-min-avg`,
-            axiosConfig
+            {
+                ...axiosConfig,
+                params: {
+                    ...axiosConfig?.params,
+                    fahrenheit: options?.fahrenheit,
+                    from: options?.from,
+                    to: options?.to,
+                    limit: options?.limit,
+                    desc: options?.desc,
+                },
+            }
         );
         return response.data;
     }
