@@ -6,6 +6,7 @@ import {
     DeviceDisplayMode,
     DeviceKnockingMode,
     DeviceLEDMode,
+    DevicePowerStatus,
     GetAirDataOptions,
     GetLatestAirDataOptions,
     Options,
@@ -17,7 +18,7 @@ import {
     SetDevicePreferenceOptions,
     SetDeviceRoomTypeOptions,
     SetDeviceSpaceTypeOptions,
-    Usage,
+    DeviceAPIUsage,
     User,
 } from "./types";
 
@@ -29,10 +30,13 @@ export {
     DeviceDisplayMode,
     DeviceKnockingMode,
     DeviceLEDMode,
+    DevicePowerStatus,
     DevicePreference,
     DeviceRoomType,
     DeviceSpaceType,
     DeviceTemperatureUnit,
+    DeviceAPIUsage,
+    DeviceAPIUsageScope,
     GetAirDataOptions,
     GetLatestAirDataOptions,
     Options,
@@ -49,16 +53,35 @@ export {
     SetDevicePreferenceOptions,
     SetDeviceRoomTypeOptions,
     SetDeviceSpaceTypeOptions,
-    Usage,
-    UsageScope,
     User,
+    UserAPIUsage,
+    UserAPIUsageScope,
 } from "./types";
+
+import {
+    MOCK_AIR_DATA,
+    MOCK_DEVICE,
+    MOCK_DEVICE_API_USAGES,
+    MOCK_LED_MODE,
+    MOCK_POWER_STATUS,
+    MOCK_USER,
+} from "./mocks";
+
+export {
+    MOCK_AIR_DATA,
+    MOCK_DEVICE,
+    MOCK_DEVICE_API_USAGES,
+    MOCK_LED_MODE,
+    MOCK_POWER_STATUS,
+    MOCK_USER,
+} from "./mocks";
 
 export class Awair {
     #axiosInstance: AxiosInstance;
     #bearerToken: string | null;
     deviceType: string | null;
     deviceId: number | null;
+    mockMode: boolean;
 
     constructor(options?: Options) {
         this.#axiosInstance = axios.create({
@@ -66,9 +89,10 @@ export class Awair {
             ...this.getAxiosConfig(options),
         });
 
+        this.#bearerToken = options?.bearerToken ?? null;
         this.deviceType = options?.deviceType ?? null;
         this.deviceId = options?.deviceId ?? null;
-        this.#bearerToken = options?.bearerToken ?? null;
+        this.mockMode = options?.mockMode ?? false;
     }
 
     private getAxiosConfig(options?: Options): AxiosRequestConfig | undefined {
@@ -99,7 +123,7 @@ export class Awair {
         return axiosConfig;
     }
 
-    private getDevice(options?: Options) {
+    private getDevice(options?: Options): {id: number; type: string} {
         const deviceType = options?.deviceType ?? this.deviceType;
         if (!deviceType) {
             throw new Error("Missing device type");
@@ -115,8 +139,21 @@ export class Awair {
         };
     }
 
+    private useMocks(options?: Options): boolean {
+        if (typeof options?.mockMode === "boolean") {
+            return options.mockMode;
+        }
+
+        return this.mockMode;
+    }
+
     async getDevices(options?: Options): Promise<Device[]> {
         const axiosConfig = this.getAxiosConfig(options);
+
+        if (this.useMocks(options)) {
+            return [MOCK_DEVICE];
+        }
+
         const response = await this.#axiosInstance.get(
             "users/self/devices",
             axiosConfig
@@ -124,14 +161,28 @@ export class Awair {
         return response.data.devices;
     }
 
-    async getUser(): Promise<User> {
-        const response = await this.#axiosInstance.get("users/self");
+    async getUser(options?: Options): Promise<User> {
+        const axiosConfig = this.getAxiosConfig(options);
+
+        if (this.useMocks(options)) {
+            return MOCK_USER;
+        }
+
+        const response = await this.#axiosInstance.get(
+            "users/self",
+            axiosConfig
+        );
         return response.data;
     }
 
-    async getDeviceAPIUsage(options?: Options): Promise<Usage[]> {
+    async getDeviceAPIUsage(options?: Options): Promise<DeviceAPIUsage[]> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return MOCK_DEVICE_API_USAGES;
+        }
+
         const response = await this.#axiosInstance.get(
             `users/self/devices/${device.type}/${device.id}/api-usages`,
             axiosConfig
@@ -144,6 +195,11 @@ export class Awair {
     ): Promise<AirData | null> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return MOCK_AIR_DATA[0];
+        }
+
         const response = await this.#axiosInstance.get(
             `users/self/devices/${device.type}/${device.id}/air-data/latest`,
             {
@@ -160,6 +216,11 @@ export class Awair {
     async getRawAirData(options?: GetAirDataOptions): Promise<AirData[]> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return MOCK_AIR_DATA;
+        }
+
         const response = await this.#axiosInstance.get(
             `users/self/devices/${device.type}/${device.id}/air-data/raw`,
             {
@@ -182,6 +243,11 @@ export class Awair {
     ): Promise<AirData[]> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return MOCK_AIR_DATA;
+        }
+
         const response = await this.#axiosInstance.get(
             `users/self/devices/${device.type}/${device.id}/air-data/5-min-avg`,
             {
@@ -204,6 +270,11 @@ export class Awair {
     ): Promise<AirData[]> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return MOCK_AIR_DATA;
+        }
+
         const response = await this.#axiosInstance.get(
             `users/self/devices/${device.type}/${device.id}/air-data/15-min-avg`,
             {
@@ -224,6 +295,11 @@ export class Awair {
     async getDeviceDisplayMode(options?: Options): Promise<DeviceDisplayMode> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return "clock";
+        }
+
         const response = await this.#axiosInstance.get(
             `devices/${device.type}/${device.id}/display`,
             axiosConfig
@@ -236,6 +312,11 @@ export class Awair {
     ): Promise<void> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return;
+        }
+
         await this.#axiosInstance.put(
             `devices/${device.type}/${device.id}/display`,
             {
@@ -253,6 +334,11 @@ export class Awair {
     ): Promise<DeviceKnockingMode> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return "SLEEP";
+        }
+
         const response = await this.#axiosInstance.get(
             `devices/${device.type}/${device.id}/knocking`,
             axiosConfig
@@ -265,10 +351,15 @@ export class Awair {
     ): Promise<void> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return;
+        }
+
         await this.#axiosInstance.put(
             `devices/${device.type}/${device.id}/knocking`,
             {
-                mode: options.mode,
+                mode: options.mode.toLowerCase(),
             },
             axiosConfig
         );
@@ -279,6 +370,11 @@ export class Awair {
     ): Promise<{mode: DeviceLEDMode; brightness?: number}> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return MOCK_LED_MODE;
+        }
+
         const response = await this.#axiosInstance.get(
             `devices/${device.type}/${device.id}/led`,
             axiosConfig
@@ -289,10 +385,15 @@ export class Awair {
     async setDeviceLEDMode(options: SetDeviceLEDModeOptions): Promise<void> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return;
+        }
+
         await this.#axiosInstance.put(
             `devices/${device.type}/${device.id}/led`,
             {
-                mode: options.mode,
+                mode: options.mode.toLowerCase(),
             },
             axiosConfig
         );
@@ -301,6 +402,11 @@ export class Awair {
     async setDeviceLocation(options: SetDeviceLocationOptions): Promise<void> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return;
+        }
+
         await this.#axiosInstance.put(
             `devices/${device.type}/${device.id}/location`,
             {
@@ -314,6 +420,11 @@ export class Awair {
     async setDeviceName(options: SetDeviceNameOptions): Promise<void> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return;
+        }
+
         await this.#axiosInstance.put(
             `devices/${device.type}/${device.id}/name`,
             {
@@ -328,6 +439,11 @@ export class Awair {
     ): Promise<void> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return;
+        }
+
         await this.#axiosInstance.put(
             `devices/${device.type}/${device.id}/preference`,
             {
@@ -340,6 +456,11 @@ export class Awair {
     async setDeviceRoomType(options: SetDeviceRoomTypeOptions): Promise<void> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return;
+        }
+
         await this.#axiosInstance.put(
             `devices/${device.type}/${device.id}/room`,
             {
@@ -354,6 +475,14 @@ export class Awair {
     ): Promise<void> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (
+            options.mockMode ||
+            (typeof options.mockMode !== "boolean" && this.mockMode)
+        ) {
+            return;
+        }
+
         await this.#axiosInstance.put(
             `devices/${device.type}/${device.id}/space`,
             {
@@ -363,11 +492,14 @@ export class Awair {
         );
     }
 
-    async getDevicePowerStatus(
-        options?: Options
-    ): Promise<{percentage: number; plugged: boolean; timestamp: string}> {
+    async getDevicePowerStatus(options?: Options): Promise<DevicePowerStatus> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return MOCK_POWER_STATUS;
+        }
+
         const response = await this.#axiosInstance.get(
             `devices/${device.type}/${device.id}/power-status`,
             axiosConfig
@@ -378,6 +510,11 @@ export class Awair {
     async getDeviceTimeZone(options?: Options): Promise<string> {
         const axiosConfig = this.getAxiosConfig(options);
         const device = this.getDevice(options);
+
+        if (this.useMocks(options)) {
+            return "America/New_York";
+        }
+
         const response = await this.#axiosInstance.get(
             `devices/${device.type}/${device.id}/timezone`,
             axiosConfig

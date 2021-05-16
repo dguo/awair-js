@@ -7,6 +7,15 @@ This project attempts to adhere to [Semantic Versioning](http://semver.org).
 ### Added
 
 - Support parameters when getting AirData
+- Support mock mode
+- Export more types
+- Allow passing in options for `getUser`
+
+### Fixed
+
+- Fix the possible values for the knocking mode and the LED mode (they come back
+  in all capital case)
+- Fix the types for the possible values for user usage scopes
 
 ## [0.2.0] - (2021-05-09)
 
