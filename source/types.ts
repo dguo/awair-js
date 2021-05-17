@@ -1,4 +1,5 @@
 import {AxiosRequestConfig} from "axios";
+import {RetryConfig} from "retry-axios";
 
 export type DeviceRoomType =
     | "LIVING_ROOM"
@@ -149,7 +150,7 @@ export interface DevicePowerStatus {
 export interface Options {
     deviceType?: string;
     deviceId?: number;
-    axiosConfig?: AxiosRequestConfig;
+    axiosConfig?: AxiosRequestConfig & {raxConfig?: RetryConfig};
     bearerToken?: string;
     mockMode?: boolean;
 }
