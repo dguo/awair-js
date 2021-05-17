@@ -37,7 +37,8 @@
         "test:watch": "jest --watchAll"
     },
     "dependencies": {
-        "axios": "^0.21.1"
+        "axios": "^0.21.1",
+        "retry-axios": "^2.4.0"
     },
     "devDependencies": {
         "@types/jest": "^26.0.23",

@@ -1,4 +1,5 @@
 import axios, {AxiosInstance, AxiosRequestConfig} from "axios";
+import rax from "retry-axios";
 
 import {
     AirData,
@@ -88,6 +89,10 @@ export class Awair {
             baseURL: "https://developer-apis.awair.is/v1/",
             ...this.getAxiosConfig(options),
         });
+        this.#axiosInstance.defaults.raxConfig = {
+            instance: this.#axiosInstance,
+        };
+        rax.attach(this.#axiosInstance);
 
         this.#bearerToken = options?.bearerToken ?? null;
         this.deviceType = options?.deviceType ?? null;

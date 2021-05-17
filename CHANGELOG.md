@@ -10,6 +10,8 @@ This project attempts to adhere to [Semantic Versioning](http://semver.org).
 - Support mock mode
 - Export more types
 - Allow passing in options for `getUser`
+- Automatically retry failed requests, using
+  [retry-axios](https://github.com/JustinBeckwith/retry-axios)
 
 ### Fixed
 
