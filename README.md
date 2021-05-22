@@ -4,7 +4,7 @@
 [![license](https://img.shields.io/npm/l/awair.svg)](https://github.com/dguo/awair-js/blob/main/LICENSE.txt)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/awair)](https://bundlephobia.com/result?p=awair)
 [![continuous integration status](https://github.com/dguo/awair-js/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/dguo/awair-js/actions/workflows/continuous-integration.yml)
-<!-- [![test coverage](https://codecov.io/gh/dguo/awair-js/branch/main/graph/badge.svg)](https://codecov.io/gh/dguo/awair-js) -->
+[![test coverage](https://codecov.io/gh/dguo/awair-js/branch/main/graph/badge.svg)](https://codecov.io/gh/dguo/awair-js)
 [![known vulnerabilities](https://snyk.io/test/github/dguo/awair-js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/dguo/awair-js?targetFile=package.json)
 
 JavaScript client for [Awair](https://www.getawair.com/)'s
