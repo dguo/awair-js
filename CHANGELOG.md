@@ -4,6 +4,12 @@ This project attempts to adhere to [Semantic Versioning](http://semver.org).
 
 ## [Unreleased]
 
+### Fixed
+
+- Make the returned values for `getRawAirData`, `get5MinuteAverageAirData`, and
+  `get15MinuteAverageAirData` actually match the declared types instead of
+  being objects with a `data` property
+
 ## [0.3.0] - (2021-05-22)
 
 ### Added

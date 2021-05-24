@@ -240,7 +240,7 @@ export class Awair {
                 },
             }
         );
-        return response.data;
+        return response.data.data;
     }
 
     async get5MinuteAverageAirData(
@@ -267,7 +267,7 @@ export class Awair {
                 },
             }
         );
-        return response.data;
+        return response.data.data;
     }
 
     async get15MinuteAverageAirData(
@@ -294,7 +294,7 @@ export class Awair {
                 },
             }
         );
-        return response.data;
+        return response.data.data;
     }
 
     async getDeviceDisplayMode(options?: Options): Promise<DeviceDisplayMode> {
